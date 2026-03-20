@@ -49,164 +49,159 @@ if uploaded_file is not None:
 
     produtos_fornecedor
 
-    simular_paletizacao = ["--", "Simular paletização (uma fileira)", "Simular paletização (fechada)"]
-    simulacao_selecionada = st.selectbox('Selecione a simulação:', simular_paletizacao)
+    if not produtos_fornecedor.empty:
+        resultados = produtos_fornecedor.copy()
 
-    if simulacao_selecionada == "Simular paletização (uma fileira)":
-        if not produtos_fornecedor.empty:
-            resultados = produtos_fornecedor.copy()
+        # SKUs master que não possuem medidas no campo master - Substituindo pela informação cadastrada da embalagem de venda.
+        resultados.loc[(resultados['ALTURA MASTER'] == 0) & (resultados['QTD. MASTER'] == 1), 'ALTURA MASTER'] = resultados['ALTURA']
+        resultados.loc[(resultados['LARGURA MASTER'] == 0) & (resultados['QTD. MASTER'] == 1), 'LARGURA MASTER'] = resultados['LARGURA']
+        resultados.loc[(produtos['COMPRIMENTO MASTER'] == 0) & (resultados['QTD. MASTER'] == 1), 'COMPRIMENTO MASTER'] = resultados['COMPRIMENTO']
 
-            # SKUs master que não possuem medidas no campo master - Substituindo pela informação cadastrada da embalagem de venda.
-            resultados.loc[(resultados['ALTURA MASTER'] == 0) & (resultados['QTD. MASTER'] == 1), 'ALTURA MASTER'] = resultados['ALTURA']
-            resultados.loc[(resultados['LARGURA MASTER'] == 0) & (resultados['QTD. MASTER'] == 1), 'LARGURA MASTER'] = resultados['LARGURA']
-            resultados.loc[(produtos['COMPRIMENTO MASTER'] == 0) & (resultados['QTD. MASTER'] == 1), 'COMPRIMENTO MASTER'] = resultados['COMPRIMENTO']
+        # Removendo SKUs sem medidas master cadastrada (evitando erros de calculo)
+        resultados = resultados[resultados['ALTURA MASTER'] != 0]
 
-            # Removendo SKUs sem medidas master cadastrada (evitando erros de calculo)
-            resultados = resultados[resultados['ALTURA MASTER'] != 0]
+        palete_largura = 100
+        palete_comprimento = 120
 
-            palete_largura = 100
-            palete_comprimento = 120
+        colunas_resultado = {
+            '75cm (1 fileira PBR)': [],
+            '115cm (1 fileira PBR)': [],
+            '155cm (1 fileira PBR)': []
+        }
 
-            colunas_resultado = {
-                '75cm (1 fileira PBR)': [],
-                '115cm (1 fileira PBR)': [],
-                '155cm (1 fileira PBR)': []
-            }
+        for altura_max in [75, 115, 155]:
+            col = f"{altura_max}cm (1 fileira PBR)"
+            temp_result = []
 
-            for altura_max in [75, 115, 155]:
-                col = f"{altura_max}cm (1 fileira PBR)"
-                temp_result = []
+            for _, row in produtos_fornecedor.iterrows():
+                comprimento_master = row['COMPRIMENTO MASTER']
+                largura_master = row['LARGURA MASTER']
+                altura_master = row['ALTURA MASTER']
 
-                for _, row in produtos_fornecedor.iterrows():
-                    comprimento_master = row['COMPRIMENTO MASTER']
-                    largura_master = row['LARGURA MASTER']
-                    altura_master = row['ALTURA MASTER']
+                # Testar duas orientações para melhor aproveitamento do comprimento do palete
+                colunas_opcao1 = math.floor(palete_comprimento / comprimento_master)
+                colunas_opcao2 = math.floor(palete_comprimento / largura_master)
+                n_colunas_fileira = max(colunas_opcao1, colunas_opcao2)
 
-                    # Testar duas orientações para melhor aproveitamento do comprimento do palete
-                    colunas_opcao1 = math.floor(palete_comprimento / comprimento_master)
-                    colunas_opcao2 = math.floor(palete_comprimento / largura_master)
-                    n_colunas_fileira = max(colunas_opcao1, colunas_opcao2)
+                # Empilhamento vertical
+                n_empilhadas = math.floor(altura_max / altura_master)
 
-                    # Empilhamento vertical
-                    n_empilhadas = math.floor(altura_max / altura_master)
+                total_caixas = n_colunas_fileira * n_empilhadas
+                temp_result.append(total_caixas)
 
-                    total_caixas = n_colunas_fileira * n_empilhadas
-                    temp_result.append(total_caixas)
+            colunas_resultado[col] = temp_result
 
-                colunas_resultado[col] = temp_result
+        for coluna, valores in colunas_resultado.items():
+            resultados[coluna] = valores
 
-            for coluna, valores in colunas_resultado.items():
-                resultados[coluna] = valores
+        # Palete X
+        palete_x_largura = 110
+        palete_x_comprimento = 110
 
-            # Palete X
-            palete_x_largura = 110
-            palete_x_comprimento = 110
+        colunas_resultado_x = {
+            '75cm (1 fileira X)': [],
+            '115cm (1 fileira X)': [],
+            '155cm (1 fileira X)': []
+        }
 
-            colunas_resultado_x = {
-                '75cm (1 fileira X)': [],
-                '115cm (1 fileira X)': [],
-                '155cm (1 fileira X)': []
-            }
+        for altura_max_x in [75, 115, 155]:
+            col = f"{altura_max_x}cm (1 fileira X)"
+            temp_result = []
 
-            for altura_max_x in [75, 115, 155]:
-                col = f"{altura_max_x}cm (1 fileira X)"
-                temp_result = []
+            for _, row in produtos_fornecedor.iterrows():
+                comprimento_master = row['COMPRIMENTO MASTER']
+                largura_master = row['LARGURA MASTER']
+                altura_master = row['ALTURA MASTER']
 
-                for _, row in produtos_fornecedor.iterrows():
-                    comprimento_master = row['COMPRIMENTO MASTER']
-                    largura_master = row['LARGURA MASTER']
-                    altura_master = row['ALTURA MASTER']
+                # Testar duas orientações para melhor aproveitamento do comprimento do palete
+                colunas_opcao1 = math.floor(palete_x_comprimento / comprimento_master)
+                colunas_opcao2 = math.floor(palete_x_comprimento / largura_master)
+                n_colunas_fileira = max(colunas_opcao1, colunas_opcao2)
 
-                    # Testar duas orientações para melhor aproveitamento do comprimento do palete
-                    colunas_opcao1 = math.floor(palete_x_comprimento / comprimento_master)
-                    colunas_opcao2 = math.floor(palete_x_comprimento / largura_master)
-                    n_colunas_fileira = max(colunas_opcao1, colunas_opcao2)
+                # Empilhamento vertical
+                n_empilhadas = math.floor(altura_max_x / altura_master)
 
-                    # Empilhamento vertical
-                    n_empilhadas = math.floor(altura_max_x / altura_master)
+                total_caixas = n_colunas_fileira * n_empilhadas
+                temp_result.append(total_caixas)
 
-                    total_caixas = n_colunas_fileira * n_empilhadas
-                    temp_result.append(total_caixas)
+            colunas_resultado_x[col] = temp_result
 
-                colunas_resultado_x[col] = temp_result
+        for coluna, valores in colunas_resultado_x.items():
+            resultados[coluna] = valores
 
-            for coluna, valores in colunas_resultado_x.items():
-                resultados[coluna] = valores
+        # Excluindo colunas desnecessárias para exibição
+        resultados = resultados.drop(columns=['PESO KG', 'CÓD. BARRAS NFE (EAN)', 'PESO MASTER KG', 'ALTURA', 'LARGURA', 'COMPRIMENTO', 'M3', 'ÁREA',
+                                            'ALTURA MASTER', 'LARGURA MASTER', 'FORNECEDOR','COMPRIMENTO MASTER'])
 
-            # Excluindo colunas desnecessárias para exibição
-            resultados = resultados.drop(columns=['PESO KG', 'CÓD. BARRAS NFE (EAN)', 'PESO MASTER KG', 'ALTURA', 'LARGURA', 'COMPRIMENTO', 'M3', 'ÁREA',
-                                                'ALTURA MASTER', 'LARGURA MASTER', 'FORNECEDOR','COMPRIMENTO MASTER'])
+        rename = {'CÓD. BARRAS UNID. NFE (EANTRIB)': 'CÓD. BARRAS UNID.'}
+        resultados.rename(columns=rename, inplace=True)
 
-            rename = {'CÓD. BARRAS UNID. NFE (EANTRIB)': 'CÓD. BARRAS UNID.'}
-            resultados.rename(columns=rename, inplace=True)
+        output_excel = f"Simulação de Paletização (fileira) - {fornecedor_selecionado}.xlsx"
+        resultados.to_excel(output_excel, index=False)
 
-            st.dataframe(resultados)
-
-            output_excel = f"Simulação de Paletização (fileira) - {fornecedor_selecionado}.xlsx"
-            resultados.to_excel(output_excel, index=False)
+        download1, download2 = st.columns(2)
+        with download1:
             st.success("Simulação de paletização (uma fileira) salva com sucesso!")
             st.download_button("📥 Baixar DataFrame", data=open(output_excel, "rb"), file_name=output_excel)
 
-    if simulacao_selecionada == "Simular paletização (fechada)":
-        if not produtos_fornecedor.empty:
-            resultados = []
+    if not produtos_fornecedor.empty:
+        resultados = []
 
-            palete_largura = 100
-            palete_comprimento = 120
+        palete_largura = 100
+        palete_comprimento = 120
                     
-            for altura_max in [75, 115, 155]:
-                for _, row in produtos_fornecedor.iterrows():
-                    comprimento_master = row['COMPRIMENTO MASTER']
-                    largura_master = row['LARGURA MASTER']
-                    altura_master = row['ALTURA MASTER']
+        for altura_max in [75, 115, 155]:
+            for _, row in produtos_fornecedor.iterrows():
+                comprimento_master = row['COMPRIMENTO MASTER']
+                largura_master = row['LARGURA MASTER']
+                altura_master = row['ALTURA MASTER']
 
-                    caixas_l1 = math.floor(palete_largura / largura_master)
-                    caixas_c1 = math.floor(palete_comprimento / comprimento_master)
-                    total1 = caixas_l1 * caixas_c1
+                caixas_l1 = math.floor(palete_largura / largura_master)
+                caixas_c1 = math.floor(palete_comprimento / comprimento_master)
+                total1 = caixas_l1 * caixas_c1
 
-                    caixas_l2 = math.floor(palete_largura / comprimento_master)
-                    caixas_c2 = math.floor(palete_comprimento / largura_master)
-                    total2 = caixas_l2 * caixas_c2
+                caixas_l2 = math.floor(palete_largura / comprimento_master)
+                caixas_c2 = math.floor(palete_comprimento / largura_master)
+                total2 = caixas_l2 * caixas_c2
 
-                    if total2 > total1:
-                        caixas_por_camada = caixas_l2 * caixas_c2
-                    else:
-                        caixas_por_camada = caixas_l1 * caixas_c1
+                if total2 > total1:
+                    caixas_por_camada = caixas_l2 * caixas_c2
+                else:
+                    caixas_por_camada = caixas_l1 * caixas_c1
 
-                    numero_camadas = math.floor(altura_max / altura_master)
-                    total_caixas = caixas_por_camada * numero_camadas
+                numero_camadas = math.floor(altura_max / altura_master)
+                total_caixas = caixas_por_camada * numero_camadas
 
-                    resultados.append({
-                        'CÓD.': row['CÓD.'],
-                        'DESCRIÇÃO COMPLETA': row['DESCRIÇÃO COMPLETA'],
-                        'ENDEREÇO': row['ENDEREÇO'],
-                        'REFERÊNCIA': row['REFERÊNCIA'],
-                        'CÓD. BARRAS': row['CÓD. BARRAS'],
-                        'CÓD. BARRAS UNID': row['CÓD. BARRAS NFE (EAN)'],
-                        'CÓD. BARRAS MASTER': row['CÓD. BARRAS MASTER'],
-                        'QTDE MASTER': row['QTD. MASTER'],
-                        'EMBALAGEM': row['EMBALAGEM'],
-                        'ALTURA MAX PALETE': altura_max,
-                        'TOTAL DE CAIXAS': total_caixas,
-                        'LASTRO': caixas_por_camada,
-                        'CAMADAS': numero_camadas
-                    })
+                resultados.append({
+                    'CÓD.': row['CÓD.'],
+                    'DESCRIÇÃO COMPLETA': row['DESCRIÇÃO COMPLETA'],
+                    'ENDEREÇO': row['ENDEREÇO'],
+                    'REFERÊNCIA': row['REFERÊNCIA'],
+                    'CÓD. BARRAS': row['CÓD. BARRAS'],
+                    'CÓD. BARRAS UNID': row['CÓD. BARRAS NFE (EAN)'],
+                    'CÓD. BARRAS MASTER': row['CÓD. BARRAS MASTER'],
+                    'QTDE MASTER': row['QTD. MASTER'],
+                    'EMBALAGEM': row['EMBALAGEM'],
+                    'ALTURA MAX PALETE': altura_max,
+                    'TOTAL DE CAIXAS': total_caixas,
+                    'LASTRO': caixas_por_camada,
+                    'CAMADAS': numero_camadas
+                })
 
-            df_resultado = pd.DataFrame(resultados)
-            df_pivot = df_resultado.pivot(index=['CÓD.', 'DESCRIÇÃO COMPLETA', 'ENDEREÇO', 'REFERÊNCIA', 'CÓD. BARRAS', 'CÓD. BARRAS UNID', 'CÓD. BARRAS MASTER', 
+        df_resultado = pd.DataFrame(resultados)
+        df_pivot = df_resultado.pivot(index=['CÓD.', 'DESCRIÇÃO COMPLETA', 'ENDEREÇO', 'REFERÊNCIA', 'CÓD. BARRAS', 'CÓD. BARRAS UNID', 'CÓD. BARRAS MASTER', 
                                                         'QTDE MASTER', 'EMBALAGEM'], columns='ALTURA MAX PALETE', values='TOTAL DE CAIXAS').reset_index()
-            df_pivot.columns.name = None
-            st.subheader('DataFrame com os resultados:')
-            st.dataframe(df_pivot, use_container_width=True)
+        df_pivot.columns.name = None
 
-            # Salvando a planilha em um arquivo excel
-            with pd.ExcelWriter("Simulação de Paletização.xlsx") as writer:
-                df_pivot.to_excel(writer, sheet_name='Simulação de Paletização', index=False)
-                st.success("Simulação de paletização (fechada) salva com sucesso!")
+        # Salvando a planilha em um arquivo excel
+        with pd.ExcelWriter("Simulação de Paletização.xlsx") as writer:
+            df_pivot.to_excel(writer, sheet_name='Simulação de Paletização', index=False)
 
+        with download2:
+            st.success("Simulação de paletização (fechada) salva com sucesso!")
             # Botão para donwload
             with open("Simulação de Paletização.xlsx", 'rb') as f:
-                    st.download_button("📥 Baixar DataFrame", f, file_name=f"Simulação de Paletização fechada - {fornecedor_selecionado}.xlsx")
+                st.download_button("📥 Baixar DataFrame", f, file_name=f"Simulação de Paletização fechada - {fornecedor_selecionado}.xlsx")
 
     st.write('_________')
     codigo = st.text_input('Digite o código do produto:').strip()

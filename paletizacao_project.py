@@ -206,7 +206,7 @@ if uploaded_file is not None:
 
             # Botão para donwload
             with open("Simulação de Paletização.xlsx", 'rb') as f:
-                    t.download_button("📥 Baixar DataFrame", f, file_name="Simulação de Paletização.xlsx")
+                    st.download_button(f"📥 Baixar DataFrame", f, file_name="Simulação de Paletização fechada - {fornecedor_selecionado}.xlsx")
 
     st.write('_________')
     codigo = st.text_input('Digite o código do produto:').strip()

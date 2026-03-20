@@ -1,0 +1,4 @@
+streamlit
+plotly.graph_objects
+math
+pandas

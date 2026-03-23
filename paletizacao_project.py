@@ -152,7 +152,7 @@ if uploaded_file is not None:
 
         download1, download2 = st.columns(2)
         with download1:
-            st.success("Simulação de paletização (uma fileira) salva com sucesso!")
+            st.success("Simulação de paletização (uma fileira) gerada com sucesso!")
             st.download_button("📥 Baixar DataFrame", data=open(output_excel, "rb"), file_name=output_excel)
 
     if not produtos_fornecedor.empty:
@@ -209,7 +209,7 @@ if uploaded_file is not None:
             df_pivot.to_excel(writer, sheet_name='Simulação de Paletização', index=False)
 
         with download2:
-            st.success("Simulação de paletização (fechada) salva com sucesso!")
+            st.success("Simulação de paletização (fechada) gerada com sucesso!")
             # Botão para donwload
             with open("Simulação de Paletização.xlsx", 'rb') as f:
                 st.download_button("📥 Baixar DataFrame", f, file_name=f"Simulação de Paletização fechada - {fornecedor_selecionado}.xlsx")

@@ -38,7 +38,6 @@ if uploaded_file is not None:
         produtos[col] = np.where((produtos[col] > 0) & (produtos[col] < 1), 1, produtos[col])
 
     # Converte para inteiro (astype(int) sempre arredonda para baixo)
-    # Se você quer que 5.1 continue 5.1, NÃO USE .astype(int), use .astype(float)
     produtos['ALTURA MASTER'] = produtos['ALTURA MASTER'].astype(float)
     produtos['LARGURA MASTER'] = produtos['LARGURA MASTER'].astype(float)
     produtos['COMPRIMENTO MASTER'] = produtos['COMPRIMENTO MASTER'].astype(float)

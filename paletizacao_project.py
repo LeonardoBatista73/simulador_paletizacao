@@ -2,6 +2,7 @@ import streamlit as st
 import plotly.graph_objects as go
 import math
 import pandas as pd
+import numpy as np
 
 # Titulo da página
 st.markdown('<h1 style="text-align: center; font-size: 30px;">Simulador de paletização</h1>', unsafe_allow_html=True)
@@ -30,14 +31,23 @@ if uploaded_file is not None:
     # Removendo SKUs sem medidas master cadastrada (evitando erros de calculo)
     produtos = produtos[produtos['ALTURA MASTER'] != 0]
 
+    # Ajusta os valores menores que 1 para 1
+    # Fazemos isso antes da conversão para inteiro para não virar zero
+    for col in ['ALTURA MASTER', 'LARGURA MASTER', 'COMPRIMENTO MASTER']:
+        # Onde for maior que 0 e menor que 1, vira 1. O resto permanece.
+        produtos[col] = np.where((produtos[col] > 0) & (produtos[col] < 1), 1, produtos[col])
+
+    # Converte para inteiro (astype(int) sempre arredonda para baixo)
+    # Se você quer que 5.1 continue 5.1, NÃO USE .astype(int), use .astype(float)
+    produtos['ALTURA MASTER'] = produtos['ALTURA MASTER'].astype(float)
+    produtos['LARGURA MASTER'] = produtos['LARGURA MASTER'].astype(float)
+    produtos['COMPRIMENTO MASTER'] = produtos['COMPRIMENTO MASTER'].astype(float)
+
     # Verificar se a coluna 'Cod' está no formato string e converter se necessário
     if produtos['CÓD.'].dtype != 'object':
         produtos['CÓD.'] = produtos['CÓD.'].astype(str)
 
     produtos['CÓD.'] = produtos['CÓD.'].str.strip()
-    produtos['ALTURA MASTER'] = produtos['ALTURA MASTER'].astype(int)
-    produtos['LARGURA MASTER'] = produtos['LARGURA MASTER'].astype(int)
-    produtos['COMPRIMENTO MASTER'] = produtos['COMPRIMENTO MASTER'].astype(int)
     produtos['FORNECEDOR'] = produtos['FORNECEDOR'].str.strip()
 
     fornecedores = produtos['FORNECEDOR'].unique()

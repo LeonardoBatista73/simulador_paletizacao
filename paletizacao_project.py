@@ -4,6 +4,8 @@ import math
 import pandas as pd
 import numpy as np
 
+st.set_page_config(page_title='Simulador de Paletização')
+
 # Titulo da página
 st.markdown('<h1 style="text-align: center; font-size: 30px;">Simulador de paletização</h1>', unsafe_allow_html=True)
 # Subtitulo

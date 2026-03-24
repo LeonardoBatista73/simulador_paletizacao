@@ -30,6 +30,9 @@ if uploaded_file is not None:
     produtos.loc[(produtos['LARGURA MASTER'] == 0) & (produtos['QTD. MASTER'] == 1), 'LARGURA MASTER'] = produtos['LARGURA']
     produtos.loc[(produtos['COMPRIMENTO MASTER'] == 0) & (produtos['QTD. MASTER'] == 1), 'COMPRIMENTO MASTER'] = produtos['COMPRIMENTO']
 
+    # SKUs master que não possuem peso no campo master - Substituindo pela informação cadastrada da embalagem de venda.
+    produtos.loc[(produtos['PESO MASTER KG'] == 0) & (produtos['QTD. MASTER'] == 1), 'PESO MASTER KG'] = produtos['PESO KG']
+
     # Removendo SKUs sem medidas master cadastrada (evitando erros de calculo)
     produtos = produtos[produtos['ALTURA MASTER'] != 0]
 
@@ -67,6 +70,9 @@ if uploaded_file is not None:
         resultados.loc[(resultados['ALTURA MASTER'] == 0) & (resultados['QTD. MASTER'] == 1), 'ALTURA MASTER'] = resultados['ALTURA']
         resultados.loc[(resultados['LARGURA MASTER'] == 0) & (resultados['QTD. MASTER'] == 1), 'LARGURA MASTER'] = resultados['LARGURA']
         resultados.loc[(produtos['COMPRIMENTO MASTER'] == 0) & (resultados['QTD. MASTER'] == 1), 'COMPRIMENTO MASTER'] = resultados['COMPRIMENTO']
+
+        # SKUs master que não possuem peso no campo master - Substituindo pela informação cadastrada da embalagem de venda.
+        produtos.loc[(produtos['PESO MASTER KG'] == 0) & (produtos['QTD. MASTER'] == 1), 'PESO MASTER KG'] = produtos['PESO KG']
 
         # Removendo SKUs sem medidas master cadastrada (evitando erros de calculo)
         resultados = resultados[resultados['ALTURA MASTER'] != 0]
@@ -236,6 +242,7 @@ if uploaded_file is not None:
             comprimento_master = produto_selecionado['COMPRIMENTO MASTER'].values[0]
             largura_master = produto_selecionado['LARGURA MASTER'].values[0]
             altura_master = produto_selecionado['ALTURA MASTER'].values[0]
+            peso_master = produto_selecionado['PESO MASTER KG'].values[0]
         else:
             st.warning("Código do produto não encontrado.")
 
@@ -266,7 +273,7 @@ if uploaded_file is not None:
         caixas_por_camada = caixas_por_linha * caixas_por_coluna
         numero_camadas = math.floor(altura_max_palete / altura_master)
         total_caixas = caixas_por_camada * numero_camadas
-
+        total_caixas_kg = (peso_master * total_caixas).round(3)
         fig = go.Figure()
 
         for camada in range(numero_camadas):
@@ -306,7 +313,11 @@ if uploaded_file is not None:
         st.write(f"**Orientação usada:** {orientacao}")
         st.write(f"**Caixas por camada:** {caixas_por_camada}")
         st.write(f"**Número de camadas possíveis:** {numero_camadas}")
-        st.success(f"**Total de caixas que cabem no palete PBR: {total_caixas} caixas**")
+        caixas_palete, peso_palete = st.columns(2)
+        with caixas_palete:
+            st.success(f"**Total de caixas (Palete PBR): {total_caixas} caixas**")
+        with peso_palete:
+            st.success(f"**Peso total do Palete PBR: {total_caixas_kg} kg**")
     
     if palete_selecionado == "Palete X" and uploaded_file is not None:
         produto_selecionado = produtos_fornecedor[produtos_fornecedor['CÓD.'].str.upper() == codigo.upper()]
@@ -314,6 +325,7 @@ if uploaded_file is not None:
             comprimento_master = produto_selecionado['COMPRIMENTO MASTER'].values[0]
             largura_master = produto_selecionado['LARGURA MASTER'].values[0]
             altura_master = produto_selecionado['ALTURA MASTER'].values[0]
+            peso_master = produto_selecionado['PESO MASTER KG'].values[0]
         else:
             st.warning("Código do produto não encontrado.")
 
@@ -344,6 +356,7 @@ if uploaded_file is not None:
         caixas_por_camada = caixas_por_linha * caixas_por_coluna
         numero_camadas = math.floor(altura_max_palete / altura_master)
         total_caixas = caixas_por_camada * numero_camadas
+        total_caixas_kg = (peso_master * total_caixas).round(3)
 
         fig = go.Figure()
 
@@ -384,4 +397,8 @@ if uploaded_file is not None:
         st.write(f"**Orientação usada:** {orientacao}")
         st.write(f"**Caixas por camada:** {caixas_por_camada}")
         st.write(f"**Número de camadas possíveis:** {numero_camadas}")
-        st.success(f"**Total de caixas que cabem no palete PBR: {total_caixas} caixas**")
+        caixas_palete, peso_palete = st.columns(2)
+        with caixas_palete:
+            st.success(f"**Total de caixas (Palete X): {total_caixas} caixas**")
+        with peso_palete:
+            st.success(f"**Peso total do Palete X: {total_caixas_kg} kg**")

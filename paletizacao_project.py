@@ -257,11 +257,11 @@ if uploaded_file is not None:
 
         a, l, c = st.columns(3)
         with a:
-            st.write(f'Altura master: {a_master}')
+            st.info(f'**Altura master**: {a_master}')
         with l:
-            st.write(f'Largura master: {l_master}')
+            st.info(f'**Largura master**: {l_master}')
         with c:
-            st.write(f'Comprimento master: {c_master}')
+            st.info(f'**Comprimento master**: {c_master}')
                                     
         st.write(f"**Fornecedor:** {fornecedor}")
 

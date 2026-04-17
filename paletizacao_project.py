@@ -44,8 +44,8 @@ if uploaded_file is not None:
 
     # Converte para inteiro (astype(int) sempre arredonda para baixo)
     produtos['ALTURA MASTER'] = produtos['ALTURA MASTER'].astype(float)
-    produtos['LARGURA MASTER'] = produtos['LARGURA MASTER'].astype(float)
-    produtos['COMPRIMENTO MASTER'] = produtos['COMPRIMENTO MASTER'].astype(float)
+    produtos['LARGURA MASTER'] = produtos['LARGURA MASTER'].astype(int)
+    produtos['COMPRIMENTO MASTER'] = produtos['COMPRIMENTO MASTER'].astype(int)
 
     # Verificar se a coluna 'Cod' está no formato string e converter se necessário
     if produtos['CÓD.'].dtype != 'object':

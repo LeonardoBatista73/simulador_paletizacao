@@ -231,8 +231,8 @@ if uploaded_file is not None:
 
     st.markdown('<h1 style="text-align: center; font-size: 30px;">📏​ Altura Máxima do Palete (em cm)</h1>', unsafe_allow_html=True)
     #medidas = [50, 75, 80, 110, 115, 155, 220]
-    medidas = st.slider('Selecione um valor para atribuir a altura máxima:', min_value=20, max_value=220, value=10)
-    altura_max_palete = st.selectbox('Selecione a altura máxima do palete (em cm):', medidas)
+    altura_max_palete = st.slider('Selecione um valor para atribuir a altura máxima:', min_value=20, max_value=220, value=10)
+    #altura_max_palete = st.selectbox('Selecione a altura máxima do palete (em cm):', medidas)
 
     tipo_palete = ["--", "Palete PBR", "Palete X"]
     palete_selecionado = st.selectbox("Selecione o tipo do palete:", tipo_palete)

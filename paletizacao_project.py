@@ -248,8 +248,21 @@ if uploaded_file is not None:
             st.warning("Código do produto não encontrado.")
 
         descricao = produto_selecionado['DESCRIÇÃO COMPLETA'].values[0]
+        a_master = produto_selecionado['ALTURA MASTER'].values[0]
+        l_master = produto_selecionado['LARGURA MASTER'].values[0]
+        c_master = produto_selecionado['COMPRIMENTO MASTER'].values[0]
+        
         fornecedor = produto_selecionado['FORNECEDOR'].values[0]
         st.write(f"**Produto selecionado:** {descricao}")
+
+        a, l, c = st.columns(3):
+        with a:
+            st.write(f'Altura master: {a_master}')
+        with l:
+            st.write(f'Largura master: {l_master}')
+        with c:
+            st.write(f'Comprimento master: {c_master}')
+                                    
         st.write(f"**Fornecedor:** {fornecedor}")
 
         caixas_l1 = math.floor(palete_pbr_largura / largura_master)

@@ -255,7 +255,7 @@ if uploaded_file is not None:
         fornecedor = produto_selecionado['FORNECEDOR'].values[0]
         st.write(f"**Produto selecionado:** {descricao}")
 
-        a, l, c = st.columns(3):
+        a, l, c = st.columns(3)
         with a:
             st.write(f'Altura master: {a_master}')
         with l:

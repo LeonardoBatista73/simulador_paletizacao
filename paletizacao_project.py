@@ -466,7 +466,7 @@ if uploaded_file is not None:
 
                     fig.add_trace(go.Mesh3d(
                         x=x, y=y, z=z,
-                        color='lightblue',
+                        color='lightbred',
                         opacity=0.5,
                         showscale=False
                     ))

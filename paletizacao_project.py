@@ -421,9 +421,14 @@ if uploaded_file is not None:
             peso_master = produto_selecionado['PESO MASTER KG'].values[0]
         else:
             st.warning("Código do produto não encontrado.")
-
+        
         descricao = produto_selecionado['DESCRIÇÃO COMPLETA'].values[0]
         fornecedor = produto_selecionado['FORNECEDOR'].values[0]
+        comprimento_master = produto_selecionado['COMPRIMENTO MASTER'].values[0]
+        largura_master = produto_selecionado['LARGURA MASTER'].values[0]
+        altura_master = produto_selecionado['ALTURA MASTER'].values[0]
+        peso_master = produto_selecionado['PESO MASTER KG'].values[0]
+        
         st.info(f"**Produto selecionado:** {descricao}")
         a, l, c = st.columns(3)
         with a:

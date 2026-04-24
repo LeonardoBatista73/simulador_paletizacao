@@ -355,9 +355,13 @@ if uploaded_file is not None:
         st.info(f"**Fornecedor:** {fornecedor}")
         with c:
             st.info(f'**Comprimento master**: {comprimento_master}')
-            
-        st.write(f"**Produto selecionado:** {descricao}")
-        st.write(f"**Fornecedor:** {fornecedor}")
+
+        p, f = st.columns([1, 2])
+
+        with p:
+            st.info(f'**Peso master**: {peso_master} kg')
+        with f:
+            st.info(f"**Fornecedor:** **{fornecedor}**")
 
         caixas_l1 = math.floor(palete_pbr_largura / largura_master)
         caixas_c1 = math.floor(palete_pbr_comprimento / comprimento_master)
@@ -461,7 +465,6 @@ if uploaded_file is not None:
         with f:
             st.info(f"**Fornecedor:** **{fornecedor}**")
             
-        
         caixas_l1 = math.floor(palete_x_largura / largura_master)
         caixas_c1 = math.floor(palete_x_comprimento / comprimento_master)
         total1 = caixas_l1 * caixas_c1

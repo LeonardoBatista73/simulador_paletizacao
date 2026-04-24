@@ -86,6 +86,7 @@ if uploaded_file is not None:
             '155cm (1 fileira PBR)': []
         }
 
+        # Simulação PBR
         for altura_max in [75, 115, 155]:
             col = f"{altura_max}cm (1 fileira PBR)"
             temp_result = []
@@ -111,6 +112,41 @@ if uploaded_file is not None:
         for coluna, valores in colunas_resultado.items():
             resultados[coluna] = valores
 
+        # Lista para armazenar os resultados da nova simulação (ALTURA MASTER COMO ALTURA MÁXIMA)
+        resultado_altura_master_fileira = []
+
+        # Novo loop: Altura máxima = Altura Master do produto
+        for _, row in produtos_fornecedor.iterrows():
+            comprimento_master = row['COMPRIMENTO MASTER']
+            largura_master = row['LARGURA MASTER']
+            altura_master = row['ALTURA MASTER']
+
+            # Testar orientações no palete (PBR considera 120cm de comprimento)
+            colunas_opcao1 = math.floor(palete_comprimento / comprimento_master)
+            colunas_opcao2 = math.floor(palete_comprimento / largura_master)
+            n_colunas_fileira = max(colunas_opcao1, colunas_opcao2)
+
+            # Como a altura máxima é a própria altura master, n_empilhadas será sempre 1
+            # total_caixas = n_colunas_fileira * math.floor(altura_master / altura_master)
+            total_caixas = n_colunas_fileira 
+
+            resultado_altura_master_fileira.append(total_caixas)
+
+        # Gerando o novo DataFrame
+        df_altura_master = pd.DataFrame({
+            'CÓD.': produtos_fornecedor['CÓD.'],
+            'DESCRIÇÃO COMPLETA': produtos_fornecedor['DESCRIÇÃO COMPLETA'],
+            'REFERÊNCIA': produtos_fornecedor['REFERÊNCIA'],
+            'EMBALAGEM': produtos_fornecedor['EMBALAGEM'],
+            'ENDEREÇO': produtos_fornecedor['ENDEREÇO'],
+            'ALTURA MASTER': produtos_fornecedor['ALTURA MASTER'],
+            'CÓD. BARRAS': produtos_fornecedor['CÓD. BARRAS'],
+            'CÓD. BARRAS UNID.': produtos_fornecedor['CÓD. BARRAS UNID. NFE (EANTRIB)'],
+            'CÓD. BARRAS MASTER': produtos_fornecedor['CÓD. BARRAS MASTER'],
+            'QTD. MASTER': produtos_fornecedor['QTD. MASTER'],
+            '1 FILEIRA (ALTURA MASTER)': resultado_altura_master_fileira
+        })
+        
         # Palete X
         palete_x_largura = 110
         palete_x_comprimento = 110
@@ -121,6 +157,7 @@ if uploaded_file is not None:
             '155cm (1 fileira X)': []
         }
 
+        # Simulação Palete X
         for altura_max_x in [75, 115, 155]:
             col = f"{altura_max_x}cm (1 fileira X)"
             temp_result = []
@@ -158,15 +195,15 @@ if uploaded_file is not None:
 
         download1, download2 = st.columns(2)
         with download1:
-            st.success("Simulação de paletização (uma fileira) gerada com sucesso!")
-            st.download_button("📥 Baixar DataFrame", data=open(output_excel, "rb"), file_name=output_excel)
+            st.download_button("📥 Baixar simulação de paletização (1 fileira)", data=open(output_excel, "rb"), file_name=output_excel)
 
     if not produtos_fornecedor.empty:
         resultados = []
 
         palete_largura = 100
         palete_comprimento = 120
-                    
+
+        # Simulação palete fechado PBR               
         for altura_max in [75, 115, 155]:
             for _, row in produtos_fornecedor.iterrows():
                 comprimento_master = row['COMPRIMENTO MASTER']
@@ -215,10 +252,15 @@ if uploaded_file is not None:
             df_pivot.to_excel(writer, sheet_name='Simulação de Paletização', index=False)
 
         with download2:
-            st.success("Simulação de paletização (fechada) gerada com sucesso!")
             # Botão para donwload
             with open("Simulação de Paletização.xlsx", 'rb') as f:
-                st.download_button("📥 Baixar DataFrame", f, file_name=f"Simulação de Paletização fechada - {fornecedor_selecionado}.xlsx")
+                st.download_button("📥 Baixar simulação de paletização (fechada)", f, file_name=f"Simulação de Paletização fechada - {fornecedor_selecionado}.xlsx")
+
+        st.markdown('<h1 style="text-align: center; font-size: 20px;">Simulação de paletização (altura máxima = altura master)</h1>', unsafe_allow_html=True)
+
+    # Simulação palete fechado PBR (uma camada / altura máxima = altura master)
+    
+
 
     st.write('_________')
     codigo = st.text_input('Digite o código do produto:').strip()
@@ -230,9 +272,9 @@ if uploaded_file is not None:
     palete_x_comprimento = 110
 
     st.markdown('<h1 style="text-align: center; font-size: 30px;">📏​ Altura Máxima do Palete (em cm)</h1>', unsafe_allow_html=True)
-    #medidas = [50, 75, 80, 110, 115, 155, 220]
-    altura_max_palete = st.slider('Selecione um valor para atribuir a altura máxima:', min_value=10, max_value=220, value=50, step=5)
+    # medidas = [50, 75, 80, 110, 115, 155, 220]
     #altura_max_palete = st.selectbox('Selecione a altura máxima do palete (em cm):', medidas)
+    altura_max_palete = st.slider('Selecione um valor para atribuir a altura máxima:', min_value=10, max_value=220, value=50, step=5)
 
     tipo_palete = ["--", "Palete PBR", "Palete X"]
     palete_selecionado = st.selectbox("Selecione o tipo do palete:", tipo_palete)
@@ -248,22 +290,9 @@ if uploaded_file is not None:
             st.warning("Código do produto não encontrado.")
 
         descricao = produto_selecionado['DESCRIÇÃO COMPLETA'].values[0]
-        a_master = produto_selecionado['ALTURA MASTER'].values[0]
-        l_master = produto_selecionado['LARGURA MASTER'].values[0]
-        c_master = produto_selecionado['COMPRIMENTO MASTER'].values[0]
-        
         fornecedor = produto_selecionado['FORNECEDOR'].values[0]
-        st.info(f"**Produto selecionado:** {descricao}")
-
-        a, l, c = st.columns(3)
-        with a:
-            st.info(f'**Altura master**: {a_master}')
-        with l:
-            st.info(f'**Largura master**: {l_master}')
-        with c:
-            st.info(f'**Comprimento master**: {c_master}')
-                                    
-        st.info(f"**Fornecedor:** {fornecedor}")
+        st.write(f"**Produto selecionado:** {descricao}")
+        st.write(f"**Fornecedor:** {fornecedor}")
 
         caixas_l1 = math.floor(palete_pbr_largura / largura_master)
         caixas_c1 = math.floor(palete_pbr_comprimento / comprimento_master)
@@ -344,19 +373,8 @@ if uploaded_file is not None:
             st.warning("Código do produto não encontrado.")
 
         descricao = produto_selecionado['DESCRIÇÃO COMPLETA'].values[0]
-        a_master = produto_selecionado['ALTURA MASTER'].values[0]
-        l_master = produto_selecionado['LARGURA MASTER'].values[0]
-        c_master = produto_selecionado['COMPRIMENTO MASTER'].values[0]
         fornecedor = produto_selecionado['FORNECEDOR'].values[0]
-        
         st.write(f"**Produto selecionado:** {descricao}")
-        A, L, C = st.columns(3)
-        with A:
-            st.write(f'**Altura master:** {a_master}')
-        with L:
-            st.write(f'**Largura master:** {l_master}')
-        with C:
-            st.write(f'**Comprimento master:** {c_master}')
         st.write(f"**Fornecedor:** {fornecedor}")
 
         caixas_l1 = math.floor(palete_x_largura / largura_master)

@@ -424,9 +424,16 @@ if uploaded_file is not None:
 
         descricao = produto_selecionado['DESCRIÇÃO COMPLETA'].values[0]
         fornecedor = produto_selecionado['FORNECEDOR'].values[0]
-        st.write(f"**Produto selecionado:** {descricao}")
-        st.write(f"**Fornecedor:** {fornecedor}")
-
+        st.info(f"**Produto selecionado:** {descricao}")
+        a, l, c = st.columns(3)
+        with a:
+            st.info(f'**Altura master**: {altura_master}')
+        with l:
+            st.info(f'**Largura master**: {largura_master}')
+        st.info(f"**Fornecedor:** {fornecedor}")
+        with c:
+            st.info(f'**Comprimento master**: {comprimento_master}')
+            
         caixas_l1 = math.floor(palete_x_largura / largura_master)
         caixas_c1 = math.floor(palete_x_comprimento / comprimento_master)
         total1 = caixas_l1 * caixas_c1

@@ -182,18 +182,20 @@ if uploaded_file is not None:
                 'ENDEREÇO': row['ENDEREÇO'],
                 'REFERÊNCIA': row['REFERÊNCIA'],
                 'CÓD. BARRAS': row['CÓD. BARRAS'],
-                'CÓD. BARRAS UNID': row['CÓD. BARRAS NFE (EAN)'],
+                'CÓD. BARRAS UNID': row['CÓD. BARRAS NFE (EANTRIB)'],
                 'CÓD. BARRAS MASTER': row['CÓD. BARRAS MASTER'],
                 'QTDE MASTER': row['QTD. MASTER'],
                 'EMBALAGEM': row['EMBALAGEM'],
                 'ALTURA MAX PALETE': altura_master, # Altura máxima é a própria caixa
-                'TOTAL DE CAIXAS': total_caixas,
-                'LASTRO': caixas_por_camada,
-                'CAMADAS': numero_camadas})
+                '1 CAMADA (FECHADA)': total_caixas})
 
         # Cria o DataFrame específico desta simulação
         df_resultado_master_unica = pd.DataFrame(resultados_altura_master)
-        df_resultado_master_unica
+
+        # Juntando em um único DF, o calculo de 1 fileira + 1 camada
+        df_altura_master = df_resultado_master_unica.join(df_resultado_master_unica['1 CAMADA (FECHADA)'])
+        df_altura_master
+        
         # Palete X
         palete_x_largura = 110
         palete_x_comprimento = 110

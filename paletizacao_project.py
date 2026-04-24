@@ -193,7 +193,7 @@ if uploaded_file is not None:
 
         # Cria o DataFrame específico desta simulação
         df_resultado_master_unica = pd.DataFrame(resultados_altura_master)
-    
+        df_resultado_master_unica
         # Palete X
         palete_x_largura = 110
         palete_x_comprimento = 110

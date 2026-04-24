@@ -167,7 +167,7 @@ if uploaded_file is not None:
             total2 = caixas_l2 * caixas_c2
 
             # Define o melhor lastro (aproveitamento total da base)
-             if total2 > total1:
+            if total2 > total1:
                 caixas_por_camada = total2
             else:
                 caixas_por_camada = total1

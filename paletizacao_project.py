@@ -193,9 +193,8 @@ if uploaded_file is not None:
         df_resultado_master_unica = pd.DataFrame(resultados_altura_master)
 
         # Juntando em um único DF, o calculo de 1 fileira + 1 camada
-        df_altura_master = df_resultado_master_unica.join(df_resultado_master_unica['1 CAMADA (FECHADA)'])
+        df_altura_master = df_altura_master.merge(df_resultado_master_unica[['CÓD.', '1 CAMADA (FECHADA)']], on='CÓD.', how='left')
         df_altura_master
-        
         # Palete X
         palete_x_largura = 110
         palete_x_comprimento = 110

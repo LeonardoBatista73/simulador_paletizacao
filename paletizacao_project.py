@@ -349,16 +349,16 @@ if uploaded_file is not None:
         st.info(f"**Produto selecionado:** {descricao}")
         a, l, c = st.columns(3)
         with a:
-            st.info(f'**Altura master**: {altura_master} cm')
+            st.info(f'**Altura master**: {altura_master}cm')
         with l:
-            st.info(f'**Largura master**: {largura_master} cm')
+            st.info(f'**Largura master**: {largura_master}cm')
         with c:
-            st.info(f'**Comprimento master**: {comprimento_master} cm')
+            st.info(f'**Comprimento master**: {comprimento_master}cm')
 
         p, f = st.columns([1, 2])
 
         with p:
-            st.info(f'**Peso master**: {peso_master} kg')
+            st.info(f'**Peso master**: {peso_master}kg')
         with f:
             st.info(f"**Fornecedor:** **{fornecedor}**")
 
@@ -450,17 +450,17 @@ if uploaded_file is not None:
         st.info(f"**Produto selecionado:** {descricao}")
         a, l, c = st.columns(3)
         with a:
-            st.info(f'**Altura master**: {altura_master} cm')
+            st.info(f'**Altura master**: {altura_master}cm')
         with l:
-            st.info(f'**Largura master**: {largura_master} cm')
+            st.info(f'**Largura master**: {largura_master}cm')
         
         with c:
-            st.info(f'**Comprimento master**: {comprimento_master} cm')
+            st.info(f'**Comprimento master**: {comprimento_master}cm')
 
         p, f = st.columns([1, 2])
 
         with p:
-            st.info(f'**Peso master**: {peso_master} kg')
+            st.info(f'**Peso master**: {peso_master}kg')
         with f:
             st.info(f"**Fornecedor:** **{fornecedor}**")
             

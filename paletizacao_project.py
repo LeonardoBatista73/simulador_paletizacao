@@ -146,7 +146,54 @@ if uploaded_file is not None:
             'QTD. MASTER': produtos_fornecedor['QTD. MASTER'],
             '1 FILEIRA (ALTURA MASTER)': resultado_altura_master_fileira
         })
+
+        # Lista para armazenar os resultados da nova simulação (ALTURA MASTER COMO ALTURA MÁXIMA) (fechada)
+        resultados_altura_master = []
         
+        # Loop considerando apenas a altura de 1 caixa (altura master)
+        for _, row in produtos_fornecedor.iterrows():
+            comprimento_master = row['COMPRIMENTO MASTER']
+            largura_master = row['LARGURA MASTER']
+            altura_master = row['ALTURA MASTER']
+
+            # Orientação 1: Largura com Largura, Comprimento com Comprimento
+            caixas_l1 = math.floor(palete_largura / largura_master)
+            caixas_c1 = math.floor(palete_comprimento / comprimento_master)
+            total1 = caixas_l1 * caixas_c1
+        
+            # Orientação 2: Largura com Comprimento, Comprimento com Largura
+            caixas_l2 = math.floor(palete_largura / comprimento_master)
+            caixas_c2 = math.floor(palete_comprimento / largura_master)
+            total2 = caixas_l2 * caixas_c2
+
+            # Define o melhor lastro (aproveitamento total da base)
+             if total2 > total1:
+                caixas_por_camada = total2
+            else:
+                caixas_por_camada = total1
+
+            # Como a altura máxima permitida é a própria altura_master, o número de camadas é sempre 1
+            numero_camadas = 1
+            total_caixas = caixas_por_camada * numero_camadas
+
+            resultados_altura_master.append({
+                'CÓD.': row['CÓD.'],
+                'DESCRIÇÃO COMPLETA': row['DESCRIÇÃO COMPLETA'],
+                'ENDEREÇO': row['ENDEREÇO'],
+                'REFERÊNCIA': row['REFERÊNCIA'],
+                'CÓD. BARRAS': row['CÓD. BARRAS'],
+                'CÓD. BARRAS UNID': row['CÓD. BARRAS NFE (EAN)'],
+                'CÓD. BARRAS MASTER': row['CÓD. BARRAS MASTER'],
+                'QTDE MASTER': row['QTD. MASTER'],
+                'EMBALAGEM': row['EMBALAGEM'],
+                'ALTURA MAX PALETE': altura_master, # Altura máxima é a própria caixa
+                'TOTAL DE CAIXAS': total_caixas,
+                'LASTRO': caixas_por_camada,
+                'CAMADAS': numero_camadas})
+
+        # Cria o DataFrame específico desta simulação
+        df_resultado_master_unica = pd.DataFrame(resultados_altura_master)
+    
         # Palete X
         palete_x_largura = 110
         palete_x_comprimento = 110

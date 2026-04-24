@@ -302,7 +302,7 @@ if uploaded_file is not None:
         with download2:
             # Botão para donwload
             with open("Simulação de Paletização.xlsx", 'rb') as f:
-                st.download_button("📥 Baixar simulação de paletização (fechada)", f, file_name=f"Simulação de Paletização fechada - {fornecedor_selecionado}.xlsx")
+                st.download_button("📥 Baixar simulação de paletização (fechada)", f, file_name=f"Simulação de Paletização fechada - {fornecedor_selecionado}.xlsx", type="primary")
 
         st.markdown('<h1 style="text-align: center; font-size: 20px;">Simulação de paletização (altura máxima = altura master)</h1>', unsafe_allow_html=True)
 
@@ -310,7 +310,7 @@ if uploaded_file is not None:
         with pd.ExcelWriter('Simulação de Paletização - Altura master.xlsx') as writer:
             df_altura_master.to_excel(writer, sheet_name='Simulação de Paletização - AM', index=False)
         with open('Simulação de Paletização - Altura master.xlsx', 'rb') as f:
-            st.download_button("📥 Baixar simulação de paletização - Altura master", f, file_name=f"Simulação de Paletização (altura master) - {fornecedor_selecionado}.xlsx", use_container_width=True)
+            st.download_button("📥 Baixar simulação de paletização - Altura master", f, file_name=f"Simulação de Paletização (altura master) - {fornecedor_selecionado}.xlsx", use_container_width=True, type="primary")
     
     st.write('_________')
     codigo = st.text_input('Digite o código do produto:').strip()

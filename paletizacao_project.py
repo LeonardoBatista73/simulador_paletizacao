@@ -182,7 +182,7 @@ if uploaded_file is not None:
                 'ENDEREÇO': row['ENDEREÇO'],
                 'REFERÊNCIA': row['REFERÊNCIA'],
                 'CÓD. BARRAS': row['CÓD. BARRAS'],
-                'CÓD. BARRAS UNID': row['CÓD. BARRAS NFE (EANTRIB)'],
+                'CÓD. BARRAS UNID': row['CÓD. BARRAS NFE (EAN)'],
                 'CÓD. BARRAS MASTER': row['CÓD. BARRAS MASTER'],
                 'QTDE MASTER': row['QTD. MASTER'],
                 'EMBALAGEM': row['EMBALAGEM'],

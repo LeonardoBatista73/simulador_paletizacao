@@ -341,6 +341,21 @@ if uploaded_file is not None:
 
         descricao = produto_selecionado['DESCRIÇÃO COMPLETA'].values[0]
         fornecedor = produto_selecionado['FORNECEDOR'].values[0]
+        comprimento_master = produto_selecionado['COMPRIMENTO MASTER'].values[0]
+        largura_master = produto_selecionado['LARGURA MASTER'].values[0]
+        altura_master = produto_selecionado['ALTURA MASTER'].values[0]
+        peso_master = produto_selecionado['PESO MASTER KG'].values[0]
+        
+        st.info(f"**Produto selecionado:** {descricao}")
+        a, l, c = st.columns(3)
+        with a:
+            st.info(f'**Altura master**: {altura_master}')
+        with l:
+            st.info(f'**Largura master**: {largura_master}')
+        st.info(f"**Fornecedor:** {fornecedor}")
+        with c:
+            st.info(f'**Comprimento master**: {comprimento_master}')
+            
         st.write(f"**Produto selecionado:** {descricao}")
         st.write(f"**Fornecedor:** {fornecedor}")
 

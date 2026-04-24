@@ -243,7 +243,7 @@ if uploaded_file is not None:
 
         download1, download2 = st.columns(2)
         with download1:
-            st.download_button("📥 Baixar simulação de paletização (1 fileira)", data=open(output_excel, "rb"), file_name=output_excel, type="primary")
+            st.download_button("📥 Baixar simulação de paletização (1 fileira)", data=open(output_excel, "rb"), file_name=output_excel, type="secondary")
 
     if not produtos_fornecedor.empty:
         resultados = []

@@ -194,7 +194,13 @@ if uploaded_file is not None:
 
         # Juntando em um único DF, o calculo de 1 fileira + 1 camada
         df_altura_master = df_altura_master.merge(df_resultado_master_unica[['CÓD.', '1 CAMADA (FECHADA)']], on='CÓD.', how='left')
-        df_altura_master
+
+        # Salvando e disponibilizando tabela para download
+        with pd.ExcelWriter('Simulação de Paletização - Altura master.xlsx') as writer:
+            df_altura_master.to_excel(writer, sheet_name='Simulação de Paletização - AM', index=False)
+        with open('Simulação de Paletização - Altura master.xlsx', 'rb') as f:
+            st.download_button("📥 Baixar simulação de paletização - Altura master", f, file_name=f"Simulação de Paletização (altura master) - {fornecedor_selecionado}.xlsx")
+            
         # Palete X
         palete_x_largura = 110
         palete_x_comprimento = 110
